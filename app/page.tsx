@@ -1,22 +1,41 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
 import { SearchBar } from "@/components/search-bar"
 import { GameCard } from "@/components/game-card"
 import { Pagination } from "@/components/pagination"
-import { mockGames } from "@/lib/data"
+import { getAllGames } from "@/lib/games-service"
+import type { Game } from "@/lib/supabase"
 
 const GAMES_PER_PAGE = 5
 
 export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
+  const [games, setGames] = useState<Game[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    loadGames()
+  }, [])
+
+  const loadGames = async () => {
+    setLoading(true)
+    try {
+      const allGames = await getAllGames()
+      setGames(allGames)
+    } catch (error) {
+      console.error("Error loading games:", error)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const filteredGames = useMemo(() => {
-    if (!searchQuery.trim()) return mockGames
+    if (!searchQuery.trim()) return games
 
-    return mockGames.filter((game) => game.name.toLowerCase().includes(searchQuery.toLowerCase()))
-  }, [searchQuery])
+    return games.filter((game) => game.name.toLowerCase().includes(searchQuery.toLowerCase()))
+  }, [games, searchQuery])
 
   const totalPages = Math.ceil(filteredGames.length / GAMES_PER_PAGE)
 
@@ -36,6 +55,17 @@ export default function HomePage() {
     setCurrentPage(page)
     // Scroll to top when page changes
     window.scrollTo({ top: 0, behavior: "smooth" })
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-4xl mb-4">🎲</div>
+          <p className="text-white">Cargando juegos...</p>
+        </div>
+      </div>
+    )
   }
 
   return (
