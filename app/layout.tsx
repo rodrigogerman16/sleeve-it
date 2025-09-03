@@ -8,7 +8,6 @@ const inter = Inter({ subsets: ["latin"] })
 export const metadata: Metadata = {
   title: "Sleeve It - Encuentra las fundas perfectas",
   description: "Busca juegos de mesa y descubre qué sleeves necesitan sus cartas",
-    generator: 'v0.dev'
 }
 
 export default function RootLayout({
