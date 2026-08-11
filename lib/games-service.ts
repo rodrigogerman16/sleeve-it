@@ -1,97 +1,34 @@
 import { supabase, type Game } from "./supabase"
 
-export async function getAllGames(): Promise<Game[]> {
-  const { data: games, error: gamesError } = await supabase
-    .from("games")
-    .select(`
-      id,
-      slug,
-      name,
-      image,
-      cards (
-        id,
-        size,
-        dimensions,
-        quantity,
-        sleeve_type,
-        brand,
-        model
-      ),
-      purchase_links (
-        id,
-        name,
-        url,
-        price
-      )
-    `)
-    .order("name")
+const GAME_SELECT = `
+  id,
+  slug,
+  name,
+  image,
+  cards (
+    id,
+    size,
+    dimensions,
+    quantity,
+    sleeve_type,
+    brand,
+    model
+  ),
+  purchase_links (
+    id,
+    name,
+    url,
+    price
+  )
+`
 
-  if (gamesError) {
-    console.error("Error fetching games:", gamesError)
-    return []
-  }
-
-  return games.map((game) => ({
-    id: game.id,
-    slug: game.slug,
-    name: game.name,
-    image: game.image || undefined,
-    cards: game.cards.map((card) => ({
-      id: card.id,
-      size: card.size,
-      dimensions: card.dimensions,
-      quantity: card.quantity,
-      sleeveType: card.sleeve_type,
-      brand: card.brand,
-      model: card.model,
-    })),
-    purchaseLinks: game.purchase_links.map((link) => ({
-      id: link.id,
-      name: link.name,
-      url: link.url,
-      price: link.price || undefined,
-    })),
-  }))
-}
-
-export async function getGameBySlug(slug: string): Promise<Game | null> {
-  const { data: game, error } = await supabase
-    .from("games")
-    .select(`
-      id,
-      slug,
-      name,
-      image,
-      cards (
-        id,
-        size,
-        dimensions,
-        quantity,
-        sleeve_type,
-        brand,
-        model
-      ),
-      purchase_links (
-        id,
-        name,
-        url,
-        price
-      )
-    `)
-    .eq("slug", slug)
-    .single()
-
-  if (error || !game) {
-    console.error("Error fetching game:", error)
-    return null
-  }
-
+function mapGame(game: any): Game {
   return {
     id: game.id,
     slug: game.slug,
     name: game.name,
     image: game.image || undefined,
-    cards: game.cards.map((card) => ({
+    cards: game.cards.map((card: any) => ({
       id: card.id,
       size: card.size,
       dimensions: card.dimensions,
@@ -100,7 +37,7 @@ export async function getGameBySlug(slug: string): Promise<Game | null> {
       brand: card.brand,
       model: card.model,
     })),
-    purchaseLinks: game.purchase_links.map((link) => ({
+    purchaseLinks: game.purchase_links.map((link: any) => ({
       id: link.id,
       name: link.name,
       url: link.url,
@@ -109,57 +46,26 @@ export async function getGameBySlug(slug: string): Promise<Game | null> {
   }
 }
 
-export async function searchGames(query: string): Promise<Game[]> {
-  const { data: games, error } = await supabase
-    .from("games")
-    .select(`
-      id,
-      slug,
-      name,
-      image,
-      cards (
-        id,
-        size,
-        dimensions,
-        quantity,
-        sleeve_type,
-        brand,
-        model
-      ),
-      purchase_links (
-        id,
-        name,
-        url,
-        price
-      )
-    `)
-    .ilike("name", `%${query}%`)
-    .order("name")
+export async function getAllGames(): Promise<Game[]> {
+  const { data: games, error } = await supabase.from("games").select(GAME_SELECT).order("name")
 
   if (error) {
-    console.error("Error searching games:", error)
-    return []
+    throw new Error(`Error fetching games: ${error.message}`)
   }
 
-  return games.map((game) => ({
-    id: game.id,
-    slug: game.slug,
-    name: game.name,
-    image: game.image || undefined,
-    cards: game.cards.map((card) => ({
-      id: card.id,
-      size: card.size,
-      dimensions: card.dimensions,
-      quantity: card.quantity,
-      sleeveType: card.sleeve_type,
-      brand: card.brand,
-      model: card.model,
-    })),
-    purchaseLinks: game.purchase_links.map((link) => ({
-      id: link.id,
-      name: link.name,
-      url: link.url,
-      price: link.price || undefined,
-    })),
-  }))
+  return games.map(mapGame)
+}
+
+export async function getGameBySlug(slug: string): Promise<Game | null> {
+  const { data: game, error } = await supabase.from("games").select(GAME_SELECT).eq("slug", slug).single()
+
+  if (error) {
+    // PGRST116 = no row matched the query - a genuine 404, not a failure.
+    if (error.code === "PGRST116") {
+      return null
+    }
+    throw new Error(`Error fetching game "${slug}": ${error.message}`)
+  }
+
+  return mapGame(game)
 }

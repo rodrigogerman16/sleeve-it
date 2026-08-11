@@ -16,7 +16,11 @@ export function GameCard({ game }: GameCardProps) {
       <Card className="bg-gray-800 border-gray-700 hover:bg-gray-750 transition-all duration-200 hover:border-purple-500/50 cursor-pointer">
         <CardContent className="p-4">
           <div className="flex items-center space-x-3">
-            {game.image && <div className="text-2xl flex-shrink-0">{game.image}</div>}
+            {game.image && (
+              <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-gray-700 flex items-center justify-center text-xl">
+                {game.image}
+              </div>
+            )}
             <div className="flex-1 min-w-0">
               <h3 className="text-white font-medium truncate">{game.name}</h3>
               <p className="text-gray-400 text-sm mt-1">{totalCards} cartas</p>

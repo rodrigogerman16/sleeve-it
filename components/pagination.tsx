@@ -38,42 +38,51 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
   const visiblePages = getVisiblePages()
 
   return (
-    <div className="flex items-center justify-center space-x-2 py-4">
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={() => onPageChange(currentPage - 1)}
-        disabled={currentPage === 1}
-        className="bg-gray-800 border-gray-700 text-white hover:bg-gray-700 disabled:opacity-50"
-      >
-        <ChevronLeft className="h-4 w-4" />
-      </Button>
-
-      {visiblePages.map((page) => (
+    <div className="py-4">
+      <div className="flex items-center justify-center space-x-2">
         <Button
-          key={page}
-          variant={currentPage === page ? "default" : "outline"}
+          variant="outline"
           size="sm"
-          onClick={() => onPageChange(page)}
-          className={
-            currentPage === page
-              ? "bg-purple-600 hover:bg-purple-700 text-white"
-              : "bg-gray-800 border-gray-700 text-white hover:bg-gray-700"
-          }
+          onClick={() => onPageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          aria-label="Página anterior"
+          className="bg-gray-800 border-gray-700 text-white hover:bg-gray-700 disabled:opacity-50"
         >
-          {page}
+          <ChevronLeft className="h-4 w-4" />
         </Button>
-      ))}
 
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={() => onPageChange(currentPage + 1)}
-        disabled={currentPage === totalPages}
-        className="bg-gray-800 border-gray-700 text-white hover:bg-gray-700 disabled:opacity-50"
-      >
-        <ChevronRight className="h-4 w-4" />
-      </Button>
+        {visiblePages.map((page) => (
+          <Button
+            key={page}
+            variant={currentPage === page ? "default" : "outline"}
+            size="sm"
+            onClick={() => onPageChange(page)}
+            aria-label={`Página ${page}`}
+            aria-current={currentPage === page ? "page" : undefined}
+            className={
+              currentPage === page
+                ? "bg-purple-600 hover:bg-purple-700 text-white"
+                : "bg-gray-800 border-gray-700 text-white hover:bg-gray-700"
+            }
+          >
+            {page}
+          </Button>
+        ))}
+
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => onPageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          aria-label="Página siguiente"
+          className="bg-gray-800 border-gray-700 text-white hover:bg-gray-700 disabled:opacity-50"
+        >
+          <ChevronRight className="h-4 w-4" />
+        </Button>
+      </div>
+      <p className="text-center text-gray-400 text-xs mt-2">
+        Página {currentPage} de {totalPages}
+      </p>
     </div>
   )
 }

@@ -16,6 +16,7 @@ export function SearchBar({ value, onChange, placeholder = "Buscar juego de mesa
       <Input
         type="text"
         placeholder={placeholder}
+        aria-label={placeholder}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         className="pl-10 bg-gray-800 border-gray-700 text-white placeholder-gray-400 focus:border-purple-500 focus:ring-purple-500/20"

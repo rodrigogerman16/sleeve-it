@@ -7,26 +7,34 @@ import { Badge } from "@/components/ui/badge"
 import { getGameBySlug } from "@/lib/games-service"
 
 interface GamePageProps {
-  params: {
+  params: Promise<{
     slug: string
-  }
+  }>
 }
 
 export default async function GamePage({ params }: GamePageProps) {
-  const game = await getGameBySlug(params.slug)
+  const { slug } = await params
+  const game = await getGameBySlug(slug)
 
   if (!game) {
     notFound()
   }
 
+  const hasMultipleCardTypes = game.cards.length > 1
+
   return (
     <div className="min-h-screen bg-gray-900">
       {/* Header */}
       <div className="sticky top-0 z-10 bg-gray-900/95 backdrop-blur-sm border-b border-gray-800">
-        <div className="max-w-md mx-auto px-4 py-4">
+        <div className="max-w-md sm:max-w-2xl mx-auto px-4 py-4">
           <div className="flex items-center space-x-3">
             <Link href="/">
-              <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white p-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                aria-label="Volver a la lista de juegos"
+                className="text-gray-400 hover:text-white p-2"
+              >
                 <ArrowLeft className="h-5 w-5" />
               </Button>
             </Link>
@@ -39,15 +47,15 @@ export default async function GamePage({ params }: GamePageProps) {
       </div>
 
       {/* Content */}
-      <div className="max-w-md mx-auto px-4 py-6 space-y-6">
+      <div className="max-w-md sm:max-w-2xl mx-auto px-4 py-6 space-y-6">
         {/* Cards Information */}
         <div className="space-y-4">
-          {game.cards.map((cardInfo, index) => (
+          {game.cards.map((cardInfo) => (
             <Card key={cardInfo.id} className="bg-gray-800 border-gray-700">
               <CardHeader className="pb-3">
                 <CardTitle className="text-white text-lg flex items-center space-x-2">
                   <Package className="h-5 w-5 text-purple-400" />
-                  <span>Información de Cartas</span>
+                  <span>Información de Cartas{hasMultipleCardTypes ? ` — ${cardInfo.size}` : ""}</span>
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -76,6 +84,15 @@ export default async function GamePage({ params }: GamePageProps) {
                     <p className="text-white font-medium">{cardInfo.model}</p>
                     <p className="text-gray-400 text-sm">{cardInfo.sleeveType}</p>
                   </div>
+                </div>
+
+                <div className="pt-2 border-t border-gray-700">
+                  <p className="text-gray-400 text-sm mb-1">Consejo</p>
+                  <p className="text-white text-sm">
+                    Este set tiene {cardInfo.quantity} cartas. Te recomendamos comprar al menos{" "}
+                    <span className="font-medium">{Math.ceil(cardInfo.quantity * 1.1)} fundas</span> (10% extra
+                    para reemplazos futuros).
+                  </p>
                 </div>
               </CardContent>
             </Card>
@@ -108,21 +125,11 @@ export default async function GamePage({ params }: GamePageProps) {
                 </a>
               ))}
             </div>
-          </CardContent>
-        </Card>
-
-        {/* Tips */}
-        <Card className="bg-gray-800 border-gray-700">
-          <CardContent className="pt-6">
-            <div className="flex items-start space-x-3">
-              <div className="text-2xl">💡</div>
-              <div>
-                <p className="text-white font-medium mb-1">Consejo</p>
-                <p className="text-gray-400 text-sm">
-                  Considera comprar un 10% extra de fundas para reemplazos futuros.
-                </p>
-              </div>
-            </div>
+            {game.purchaseLinks.some((link) => link.price) && (
+              <p className="text-gray-400 text-xs mt-3">
+                Precios de referencia en USD. Pueden variar en el sitio del vendedor.
+              </p>
+            )}
           </CardContent>
         </Card>
       </div>

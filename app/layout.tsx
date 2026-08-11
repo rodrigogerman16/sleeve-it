@@ -8,6 +8,16 @@ const inter = Inter({ subsets: ["latin"] })
 export const metadata: Metadata = {
   title: "Sleeve It - Encuentra las fundas perfectas",
   description: "Busca juegos de mesa y descubre qué sleeves necesitan sus cartas",
+  openGraph: {
+    title: "Sleeve It - Encuentra las fundas perfectas",
+    description: "Busca juegos de mesa y descubre qué sleeves necesitan sus cartas",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Sleeve It - Encuentra las fundas perfectas",
+    description: "Busca juegos de mesa y descubre qué sleeves necesitan sus cartas",
+  },
 }
 
 export default function RootLayout({
