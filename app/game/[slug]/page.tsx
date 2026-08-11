@@ -41,7 +41,16 @@ export default async function GamePage({ params }: GamePageProps) {
               </Button>
             </Link>
             <div className="flex items-center space-x-3 flex-1 min-w-0">
-              {game.image && <div className="text-2xl flex-shrink-0">{game.image}</div>}
+              {game.image &&
+                (game.image.startsWith("http") ? (
+                  <img
+                    src={game.image}
+                    alt={game.name}
+                    className="w-10 h-10 rounded-lg object-cover bg-gray-700 flex-shrink-0"
+                  />
+                ) : (
+                  <div className="text-2xl flex-shrink-0">{game.image}</div>
+                ))}
               <h1 className="text-xl font-bold text-white truncate">{game.name}</h1>
             </div>
           </div>
