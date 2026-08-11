@@ -50,6 +50,29 @@ export default async function GamePage({ params }: GamePageProps) {
       <div className="max-w-md sm:max-w-2xl mx-auto px-4 py-6 space-y-6">
         {/* Cards Information */}
         <div className="space-y-4">
+          {game.cards.length === 0 && (
+            <Card className="bg-gray-800 border-gray-700">
+              <CardContent className="pt-6 text-center">
+                <div className="text-3xl mb-2">🃏</div>
+                <p className="text-white font-medium mb-1">Todavía no tenemos datos de cartas</p>
+                <p className="text-gray-400 text-sm">
+                  No sabemos qué sleeve recomendar para {game.name} todavía.{" "}
+                  <a
+                    href={`https://github.com/rodrigogerman16/sleeve-it/issues/new?title=${encodeURIComponent(
+                      `Datos de cartas para ${game.name}`,
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-purple-400 hover:text-purple-300 underline"
+                  >
+                    Sugerí los datos
+                  </a>{" "}
+                  si los tenés.
+                </p>
+              </CardContent>
+            </Card>
+          )}
+
           {game.cards.map((cardInfo) => (
             <Card key={cardInfo.id} className="bg-gray-800 border-gray-700">
               <CardHeader className="pb-3">
