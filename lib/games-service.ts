@@ -18,7 +18,9 @@ const GAME_SELECT = `
     id,
     name,
     url,
-    price
+    price,
+    category,
+    dimensions
   )
 `
 
@@ -42,6 +44,8 @@ function mapGame(game: any): Game {
       name: link.name,
       url: link.url,
       price: link.price || undefined,
+      category: link.category,
+      dimensions: link.dimensions || undefined,
     })),
   }
 }

@@ -76,6 +76,8 @@ export type Database = {
           name: string
           url: string
           price: string | null
+          category: "game" | "sleeve"
+          dimensions: string | null
           created_at: string
         }
         Insert: {
@@ -84,6 +86,8 @@ export type Database = {
           name: string
           url: string
           price?: string | null
+          category?: "game" | "sleeve"
+          dimensions?: string | null
           created_at?: string
         }
         Update: {
@@ -92,6 +96,8 @@ export type Database = {
           name?: string
           url?: string
           price?: string | null
+          category?: "game" | "sleeve"
+          dimensions?: string | null
           created_at?: string
         }
       }
@@ -123,4 +129,6 @@ export interface PurchaseLink {
   name: string
   url: string
   price?: string
+  category: "game" | "sleeve"
+  dimensions?: string
 }

@@ -21,6 +21,8 @@ export default async function GamePage({ params }: GamePageProps) {
   }
 
   const hasMultipleCardTypes = game.cards.length > 1
+  const gameLinks = game.purchaseLinks.filter((link) => link.category === "game")
+  const sleeveLinks = game.purchaseLinks.filter((link) => link.category === "sleeve")
 
   return (
     <div className="min-h-screen bg-gray-900">
@@ -122,39 +124,73 @@ export default async function GamePage({ params }: GamePageProps) {
           ))}
         </div>
 
-        {/* Purchase Links */}
-        <Card className="bg-gray-800 border-gray-700">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-white text-lg flex items-center space-x-2">
-              <ExternalLink className="h-5 w-5 text-green-400" />
-              <span>Dónde Comprar</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {game.purchaseLinks.map((link) => (
-                <a key={link.id} href={link.url} target="_blank" rel="noopener noreferrer" className="block">
-                  <div className="flex items-center justify-between p-3 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors border border-gray-600 hover:border-green-500/50">
-                    <div className="flex items-center space-x-3">
-                      <ExternalLink className="h-4 w-4 text-gray-400" />
-                      <span className="text-white font-medium">{link.name}</span>
+        {/* Game Purchase Links */}
+        {gameLinks.length > 0 && (
+          <Card className="bg-gray-800 border-gray-700">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-white text-lg flex items-center space-x-2">
+                <ExternalLink className="h-5 w-5 text-green-400" />
+                <span>Dónde Comprar el Juego</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {gameLinks.map((link) => (
+                  <a key={link.id} href={link.url} target="_blank" rel="noopener noreferrer" className="block">
+                    <div className="flex items-center justify-between p-3 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors border border-gray-600 hover:border-green-500/50">
+                      <div className="flex items-center space-x-3">
+                        <ExternalLink className="h-4 w-4 text-gray-400" />
+                        <span className="text-white font-medium">{link.name}</span>
+                      </div>
+                      {link.price && (
+                        <Badge variant="outline" className="text-green-400 border-green-400">
+                          {link.price}
+                        </Badge>
+                      )}
                     </div>
-                    {link.price && (
-                      <Badge variant="outline" className="text-green-400 border-green-400">
-                        {link.price}
-                      </Badge>
-                    )}
-                  </div>
-                </a>
-              ))}
-            </div>
-            {game.purchaseLinks.some((link) => link.price) && (
-              <p className="text-gray-400 text-xs mt-3">
-                Precios de referencia en USD. Pueden variar en el sitio del vendedor.
-              </p>
-            )}
-          </CardContent>
-        </Card>
+                  </a>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Sleeve Purchase Links */}
+        {sleeveLinks.length > 0 && (
+          <Card className="bg-gray-800 border-gray-700">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-white text-lg flex items-center space-x-2">
+                <Package className="h-5 w-5 text-purple-400" />
+                <span>Comprar Fundas</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {sleeveLinks.map((link) => (
+                  <a key={link.id} href={link.url} target="_blank" rel="noopener noreferrer" className="block">
+                    <div className="flex items-center justify-between p-3 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors border border-gray-600 hover:border-purple-500/50">
+                      <div className="flex items-center space-x-3">
+                        <Package className="h-4 w-4 text-gray-400" />
+                        <span className="text-white font-medium">{link.name}</span>
+                      </div>
+                      {link.price && (
+                        <Badge variant="outline" className="text-green-400 border-green-400">
+                          {link.price}
+                        </Badge>
+                      )}
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {game.purchaseLinks.some((link) => link.price) && (
+          <p className="text-gray-400 text-xs -mt-3">
+            Precios de referencia en USD. Pueden variar en el sitio del vendedor.
+          </p>
+        )}
       </div>
     </div>
   )
